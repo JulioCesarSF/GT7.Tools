@@ -85,7 +85,7 @@ jobs:
       run: dotnet restore ${{ env.SLN_PATH }}
       
     - name: Publish Project
-      run: dotnet publish ${{ env.SLN_PATH }} -c Release --no-restore
+      run: dotnet publish ${{ env.SLN_PATH }} -c Release --no-restore --self-contained true
 
     - name: Create Zip File
       uses: papeloto/action-zip@v1
