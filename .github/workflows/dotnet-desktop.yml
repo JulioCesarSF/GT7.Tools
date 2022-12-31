@@ -56,14 +56,14 @@ jobs:
                              # https://help.github.com/en/actions/reference/workflow-syntax-for-github-actions#jobsjob_idruns-on
 
     env:
-      Solution_Name: GT7.DrServer.sln                         # Replace with your solution name, i.e. MyWpfApp.sln.
+      Solution_Name: GT7.Tools.sln                         # Replace with your solution name, i.e. MyWpfApp.sln.
       #Test_Project_Path: your-test-project-path                 # Replace with the path to your test project, i.e. MyWpfApp.Tests\MyWpfApp.Tests.csproj.
-      Wap_Project_Directory: GT7.DrServer\GT7.ScreenParser    # Replace with the Wap project directory relative to the solution, i.e. MyWpfApp.Package.
+      Wap_Project_Directory: GT7.ScreenParser\GT7.Tools.sln    # Replace with the Wap project directory relative to the solution, i.e. MyWpfApp.Package.
      # Wap_Project_Path: your-wap-project-path                   # Replace with the path to your Wap project, i.e. MyWpf.App.Package\MyWpfApp.Package.wapproj.
-      ZIP_PATH: GT7.DrServer\GT7.ScreenParser\bin\Release\net6.0\win-x64\publish\GT7.ScreenParse.zip
-      EXE_PATH: GT7.DrServer\GT7.ScreenParser\bin\Release\net6.0\\net6.0-windows\win-x64\publish\win-x64
-      CS_PROJ_PATH: GT7.DrServer\GT7.ScreenParser\GT7.ScreenParser.csproj
-      SLN_PATH: GT7.DrServer\GT7.DrServer.sln
+      ZIP_PATH: GT7.ScreenParser\bin\Release\net6.0\GT7.ScreenParse.zip
+      EXE_PATH: GT7.ScreenParser\bin\Release\net6.0
+      CS_PROJ_PATH: GT7.ScreenParser\GT7.ScreenParser.csproj
+      SLN_PATH: GT7.Tools.sln
 
     steps:
     - name: Checkout
@@ -85,7 +85,7 @@ jobs:
       run: dotnet restore ${{ env.SLN_PATH }}
       
     - name: Publish Project
-      run: dotnet publish ${{ env.SLN_PATH }} -c Release -r win-x64 --no-restore
+      run: dotnet publish ${{ env.SLN_PATH }} -c Release --no-restore
 
     - name: Create Zip File
       uses: papeloto/action-zip@v1
