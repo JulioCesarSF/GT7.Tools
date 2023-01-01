@@ -50,11 +50,12 @@ namespace GT7.ScreenParser
                 var extractDr = ExtractImageCharacters(dr.GetEncodedBitmap());
                 var extractSr = ExtractImageCharacters(sr.GetEncodedBitmap());
 
-                float completed = ExtractProgress(drProgressBar);
+                double completed = drProgressBar.ExtractProgress();
+                int drPoints = CalculateDriverRatingPoints(completed, extractDr);
 
                 stopWatch.Stop();
                 TimeSpan ts = stopWatch.Elapsed;
-                Console.WriteLine($"[{extractDr}/{extractSr}] Progress: {completed}%| Total time to finish: {ts.ToString(@"m\:ss\.fff")}");
+                Console.WriteLine($"[{extractDr}/{extractSr}] Progress: {completed}% {drPoints}pts| Total time to finish: {ts.ToString(@"m\:ss\.fff")}");
 
                 SaveExtractImages(dr, sr, drProgressBar, parsedArgs);
             }
@@ -71,31 +72,32 @@ namespace GT7.ScreenParser
             }
         }
 
-        /// <summary>
-        /// Extract percentage progress from DR bar
-        /// </summary>
-        /// <param name="drProgressBar"></param>
-        /// <returns></returns>
-        public static float ExtractProgress(SKBitmap? drProgressBar)
+        public static int CalculateDriverRatingPoints(double currentProgress, string drCharacter)
         {
-            if (drProgressBar == null) return 0.0f;
-            //var redColor = new SKColor(255, 0, 0);
-
-            var countRed = 0;
-            var countBlue = 0;
-            for (var x = 1/* ignore first column*/; x < drProgressBar.Width; x++)
+            int maxRating = 0;
+            switch (drCharacter)
             {
-                var currentPixel = drProgressBar.GetPixel(x, 1); //ignore first line
-                if (currentPixel.Equals(RedColor))
-                {
-                    countRed++;
-                }
-                if (currentPixel.Blue == 255)
-                    countBlue++;
+                case "A+":
+                    maxRating = 75000;
+                    break;                    
+                case "A":
+                    maxRating = 49999;
+                    break;
+                case "B":
+                    maxRating = 29999;
+                    break;
+                case "C":
+                    maxRating = 9999;
+                    break;
+                case "D":
+                    maxRating = 3999;
+                    break;
+                case "E":
+                    maxRating = 1999;
+                    break;      
             }
 
-            float completed = (countRed * 100) / (countBlue + countRed);
-            return completed;
+            return (int)(currentProgress * maxRating) / 100;
         }
 
         /// <summary>
@@ -126,36 +128,6 @@ namespace GT7.ScreenParser
 
             if (!Directory.EnumerateFiles(FilePaths.TesseractFiles).Any())
                 throw new Exception($"Please, install Tesseract files in this folder: {FilePaths.TesseractFiles}");
-        }
-
-        /// <summary>
-        /// Crop a given image path for a given size
-        /// </summary>
-        /// <param name="screenshot"></param>
-        /// <param name="xDistancePercent"></param>
-        /// <param name="yDistancePercent"></param>
-        /// <param name="w"></param>
-        /// <param name="h"></param>
-        /// <returns></returns>
-        /// <exception cref="Exception"></exception>
-        public static SKBitmap CropScreenshot(string screenshot, float xDistancePercent, float yDistancePercent, int w, int h)
-        {
-            using (var fStream = new FileStream(screenshot, FileMode.Open))
-            {
-                using (var inputStream = new SKManagedStream(fStream))
-                {
-                    var bitmap = SKBitmap.Decode(inputStream);
-                    int xSize = (int)(bitmap.Width * xDistancePercent);
-                    int ySize = (int)(bitmap.Height * yDistancePercent);
-
-                    var croppedImage = new SKBitmap(w, h);
-                    var rect = new SKRectI(xSize, ySize, xSize + w, ySize + h);
-                    if (bitmap.ExtractSubset(croppedImage, rect))
-                        return croppedImage;
-
-                    throw new Exception("It was not possible to crop the screenshot");
-                }
-            }
         }
 
         /// <summary>

@@ -72,5 +72,32 @@ namespace GT7.ScreenParser.Extensions
 
             throw new Exception("It was not possible to crop the screenshot");
         }
+
+        /// <summary>
+        /// Extract percentage progress from DR bar
+        /// </summary>
+        /// <param name="drProgressBar"></param>
+        /// <returns></returns>
+        public static double ExtractProgress(this SKBitmap drProgressBar)
+        {
+            if (drProgressBar == null) return 0.0f;
+            var redColor = new SKColor(255, 0, 0);
+
+            var countRed = 0;
+            var countBlue = 0;
+            for (var x = 1/* ignore first column*/; x < drProgressBar.Width; x++)
+            {
+                var currentPixel = drProgressBar.GetPixel(x, 1); //ignore first line
+                if (currentPixel.Equals(redColor))
+                {
+                    countRed++;
+                }
+                if (currentPixel.Blue == 255)
+                    countBlue++;
+            }
+
+            double completed = (countRed * 100) / (countBlue + countRed);
+            return completed;
+        }
     }
 }
