@@ -14,7 +14,7 @@
         #endregion
 
         #region Sizes
-        public const int CharacterBoxWidth = 40;
+        public const int CharacterBoxWidth = 60;
         public const int CharacterBoxHeight = 40;
 
         public const int ProgressBarBoxWidth = 100;
