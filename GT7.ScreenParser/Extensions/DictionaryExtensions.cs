@@ -30,6 +30,12 @@ namespace GT7.ScreenParser.Extensions
             else if (string.IsNullOrEmpty(keyValues[ConfigurationKeys.SaveResult])
                 || string.IsNullOrWhiteSpace(keyValues[ConfigurationKeys.SaveResult]))
                 keyValues[ConfigurationKeys.SaveResult] = "false";
+
+            if (!keyValues.ContainsKey(ConfigurationKeys.ImageType))
+                keyValues.Add(ConfigurationKeys.ImageType, "drsr");
+            else if (string.IsNullOrEmpty(keyValues[ConfigurationKeys.ImageType])
+                || string.IsNullOrWhiteSpace(keyValues[ConfigurationKeys.ImageType]))
+                keyValues[ConfigurationKeys.ImageType] = "drsr";
         }
     }
 }

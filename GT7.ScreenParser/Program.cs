@@ -27,24 +27,19 @@ namespace GT7.ScreenParser
                 Stopwatch stopWatch = new Stopwatch();
                 stopWatch.Start();
 
-                //Decode initial image
                 originalImage = DecodeImageFromFile(parsedArgs[ConfigurationKeys.ImagePath]);
                 if (originalImage.CalculateAspectRatio() != 1.77D)
                     throw new Exception("Incorret image aspect ratio, It needs to be 16:9");
 
                 var convertionFactor = originalImage.CalculateConvertionFactor();
 
-                //pen drive image
-                dr = CropScreenshot(originalImage,
-                    Gt7ImageValues.DrInitialXDistancePosition, Gt7ImageValues.DrInitialYDistancePosition,
+                dr = originalImage.CropScreenshot(Gt7ImageValues.DrInitialXDistancePosition, Gt7ImageValues.DrInitialYDistancePosition,
                     Gt7ImageValues.CharacterBoxWidth, Gt7ImageValues.CharacterBoxHeight);
 
-                sr = CropScreenshot(originalImage,
-                    Gt7ImageValues.SrInitialXDistancePosition, Gt7ImageValues.SrInitialYDistancePosition,
+                sr = originalImage.CropScreenshot(Gt7ImageValues.SrInitialXDistancePosition, Gt7ImageValues.SrInitialYDistancePosition,
                     Gt7ImageValues.CharacterBoxWidth, Gt7ImageValues.CharacterBoxHeight);
 
-                drProgressBar = CropScreenshot(originalImage,
-                    Gt7ImageValues.ProgressBarInitialXDistancePosition, Gt7ImageValues.ProgressBarInitialYDistancePosition,
+                drProgressBar = originalImage.CropScreenshot(Gt7ImageValues.ProgressBarInitialXDistancePosition, Gt7ImageValues.ProgressBarInitialYDistancePosition,
                     (int)(Gt7ImageValues.ProgressBarBoxWidth / convertionFactor), (int)(Gt7ImageValues.ProgressBarBoxHeight / convertionFactor));
 
                 ChangePixelColor(dr, RedColor, Gt7ImageValues.CharacterRedByteThreshold);
@@ -164,28 +159,10 @@ namespace GT7.ScreenParser
         }
 
         /// <summary>
-        /// Crop a given image path for a given size
+        /// Decode an image to SKBitmap
         /// </summary>
-        /// <param name="screenshot"></param>
-        /// <param name="xDistancePercent"></param>
-        /// <param name="yDistancePercent"></param>
-        /// <param name="w"></param>
-        /// <param name="h"></param>
+        /// <param name="filePath"></param>
         /// <returns></returns>
-        /// <exception cref="Exception"></exception>
-        public static SKBitmap CropScreenshot(SKBitmap bitmap, float xDistancePercent, float yDistancePercent, int w, int h)
-        {
-            int xSize = (int)(bitmap.Width * xDistancePercent);
-            int ySize = (int)(bitmap.Height * yDistancePercent);
-
-            var croppedImage = new SKBitmap(w, h);
-            var rect = new SKRectI(xSize, ySize, xSize + w, ySize + h);
-            if (bitmap.ExtractSubset(croppedImage, rect))
-                return croppedImage;
-
-            throw new Exception("It was not possible to crop the screenshot");
-        }
-
         public static SKBitmap DecodeImageFromFile(string filePath)
         {
             using (var fStream = new FileStream(filePath, FileMode.Open))
@@ -205,8 +182,6 @@ namespace GT7.ScreenParser
         /// <param name="threshold"></param>
         public static void ChangePixelColor(SKBitmap bitmap, SKColor newColor, int threshold)
         {
-            //var redColor = new SKColor(255, 0, 0);
-
             for (var x = 0; x < bitmap.Width; x++)
             {
                 for (var y = 0; y < bitmap.Height; y++)
@@ -220,7 +195,6 @@ namespace GT7.ScreenParser
                 }
             }
         }
-
 
         /// <summary>
         /// Retrieve characters from an byte array (image in bytes)

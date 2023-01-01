@@ -49,5 +49,28 @@ namespace GT7.ScreenParser.Extensions
                 }
             }
         }
+
+        /// <summary>
+        /// Crop a given bitmap 
+        /// </summary>
+        /// <param name="bitmap"></param>
+        /// <param name="xDistancePercent"></param>
+        /// <param name="yDistancePercent"></param>
+        /// <param name="w"></param>
+        /// <param name="h"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
+        public static SKBitmap CropScreenshot(this SKBitmap bitmap, float xDistancePercent, float yDistancePercent, int w, int h)
+        {
+            int xSize = (int)(bitmap.Width * xDistancePercent);
+            int ySize = (int)(bitmap.Height * yDistancePercent);
+
+            var croppedImage = new SKBitmap(w, h);
+            var rect = new SKRectI(xSize, ySize, xSize + w, ySize + h);
+            if (bitmap.ExtractSubset(croppedImage, rect))
+                return croppedImage;
+
+            throw new Exception("It was not possible to crop the screenshot");
+        }
     }
 }

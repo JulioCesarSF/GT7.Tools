@@ -24,8 +24,8 @@ namespace GT7.ScreenParser.Extensions
                 //discard keys without values
                 if (split.Length == 2)
                 {
-                    var key = split[0];
-                    var value = split[1];
+                    var key = split[0].ToLower();
+                    var value = split[1].ToLower();
                     if (!configuration.ContainsKey(key))
                         configuration.Add(key, value);
                 }
