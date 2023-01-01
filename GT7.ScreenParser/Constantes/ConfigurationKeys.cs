@@ -7,5 +7,7 @@
         public const string ImagePath = "img";
 
         public const string SaveResult = "save";
+
+        public const string ImageType = "type";
     }
 }
